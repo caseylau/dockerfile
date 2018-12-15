@@ -55,6 +55,8 @@ RUN { \
 RUN pecl install redis -y && docker-php-ext-enable redis
 
 # drush command
+ENV DRUPAL_VERSION 0.6.0
+
 RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launcher/releases/download/$DRUSH_VERSION/drush.phar" && \
     chmod +x /usr/local/bin/drush
 

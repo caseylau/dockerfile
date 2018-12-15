@@ -1,7 +1,6 @@
+# from https://www.drupal.org/docs/8/system-requirements/drupal-8-php-requirements
 FROM php:7.2-fpm
-ENV DRUSH_VERSION 0.6.0
 
-# Below come from https://github.com/docker-library/drupal/blob/2c1fc3d9ca678b682e68d599d046633a5deba858/8.6/fpm/Dockerfile
 # install the PHP extensions we need
 RUN set -ex; \
 	\
@@ -51,20 +50,17 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
-# Above come from https://github.com/docker-library/drupal/blob/2c1fc3d9ca678b682e68d599d046633a5deba858/8.6/fpm/Dockerfile
 
+WORKDIR /var/www/html
 
-# Install redis
-RUN pecl install redis -y && docker-php-ext-enable redis
+# https://www.drupal.org/node/3060/release
+ENV DRUPAL_VERSION 8.6.4
+ENV DRUPAL_MD5 455722dcf2c051232e6f9299725d11a3
 
-# drush command
-RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launcher/releases/download/$DRUSH_VERSION/drush.phar" && \
-    chmod +x /usr/local/bin/drush
+RUN curl -fSL "https://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
+	&& echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
+	&& tar -xz --strip-components=1 -f drupal.tar.gz \
+	&& rm drupal.tar.gz \
+	&& chown -R www-data:www-data sites modules themes
 
-#drupal command
-RUN curl https://drupalconsole.com/installer -L -o drupal.phar && \
-    mv drupal.phar /usr/local/bin/drupal && \
-    chmod +x /usr/local/bin/drupal
-
-#change user and group of folder
-RUN chown -R www-data:www-data /var/www
+# vim:set ft=dockerfile:

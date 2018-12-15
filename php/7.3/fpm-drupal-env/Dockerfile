@@ -1,7 +1,6 @@
+# from https://www.drupal.org/docs/8/system-requirements/drupal-8-php-requirements
 FROM php:7.3-fpm
-ENV DRUSH_VERSION 0.6.0
 
-# Below come from https://github.com/docker-library/drupal/blob/2c1fc3d9ca678b682e68d599d046633a5deba858/8.6/fpm/Dockerfile
 # install the PHP extensions we need
 RUN set -ex; \
 	\
@@ -51,13 +50,13 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
-# Above come from https://github.com/docker-library/drupal/blob/2c1fc3d9ca678b682e68d599d046633a5deba858/8.6/fpm/Dockerfile
-
 
 # Install redis
 RUN pecl install redis -y && docker-php-ext-enable redis
 
 # drush command
+ENV DRUSH_VERSION 0.6.0
+
 RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launcher/releases/download/$DRUSH_VERSION/drush.phar" && \
     chmod +x /usr/local/bin/drush
 
@@ -65,6 +64,3 @@ RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launc
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && \
     mv drupal.phar /usr/local/bin/drupal && \
     chmod +x /usr/local/bin/drupal
-
-#change user and group of folder
-RUN chown -R www-data:www-data /var/www

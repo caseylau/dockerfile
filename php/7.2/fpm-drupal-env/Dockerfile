@@ -66,6 +66,7 @@ RUN curl https://drupalconsole.com/installer -L -o drupal.phar && \
     chmod +x /usr/local/bin/drupal
 
 # install vi
-RUN apt-get install -y vi
+RUN apt-get update; \
+    apt-get install -y vim
 
 

@@ -1,5 +1,5 @@
 # from https://hub.docker.com/_/drupal?tab=tags
-FROM FROM drupal:8.6-fpm
+FROM drupal:8.6-fpm
 
 # Install redis
 RUN pecl install redis -y && docker-php-ext-enable redis

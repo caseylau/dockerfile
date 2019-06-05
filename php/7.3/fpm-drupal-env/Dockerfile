@@ -55,7 +55,7 @@ RUN { \
 
 # install the PHP extensions we need
 RUN apt-get update \
-  && apt-get install -y git \
+  && apt-get install -y git mariadb-client \
         && rm -rf /var/lib/apt/lists/* \
         && docker-php-ext-install bcmath
 

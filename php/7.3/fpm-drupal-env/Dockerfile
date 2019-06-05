@@ -1,3 +1,4 @@
+
 # from https://www.drupal.org/docs/8/system-requirements/drupal-8-php-requirements
 FROM php:7.3-fpm
 
@@ -15,6 +16,7 @@ RUN set -ex; \
 		libjpeg-dev \
 		libpng-dev \
 		libpq-dev \
+		libzip-dev \
 	; \
 	\
 	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
@@ -50,6 +52,16 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+# install the PHP extensions we need
+RUN apt-get update \
+  && apt-get install -y git \
+        && rm -rf /var/lib/apt/lists/* \
+        && docker-php-ext-install bcmath
+
+# install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php \
+  && mv composer.phar /usr/local/bin/composer
 
 # Install redis
 RUN pecl install redis -y && docker-php-ext-enable redis
